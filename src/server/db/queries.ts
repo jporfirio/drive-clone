@@ -1,5 +1,9 @@
 import { db } from "@drive/server/db";
-import { files_table, folders_table } from "@drive/server/db/schema";
+import {
+  DB_FileType,
+  files_table,
+  folders_table,
+} from "@drive/server/db/schema";
 import { eq } from "drizzle-orm";
 
 export const QUERIES = {
@@ -32,5 +36,22 @@ export const QUERIES = {
       .select()
       .from(folders_table)
       .where(eq(folders_table.parent, folderId));
+  },
+};
+
+export const MUTATIONS = {
+  async createFile(input: {
+    file: {
+      name: string;
+      size: number;
+      url: string;
+    };
+    userId: string;
+  }) {
+    if (!input.userId) throw new Error("Unauthorized");
+
+    return await db
+      .insert(files_table)
+      .values({ ...input.file, parent: 1, createdAt: undefined, ownerId: "" });
   },
 };
