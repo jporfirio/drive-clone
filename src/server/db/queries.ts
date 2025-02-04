@@ -1,9 +1,5 @@
 import { db } from "@drive/server/db";
-import {
-  DB_FileType,
-  files_table,
-  folders_table,
-} from "@drive/server/db/schema";
+import { files_table, folders_table } from "@drive/server/db/schema";
 import { eq } from "drizzle-orm";
 
 export const QUERIES = {
@@ -28,14 +24,16 @@ export const QUERIES = {
     return db
       .select()
       .from(files_table)
-      .where(eq(files_table.parent, folderId));
+      .where(eq(files_table.parent, folderId))
+      .orderBy(files_table.id);
   },
 
   getFolders(folderId: number) {
     return db
       .select()
       .from(folders_table)
-      .where(eq(folders_table.parent, folderId));
+      .where(eq(folders_table.parent, folderId))
+      .orderBy(folders_table.id);
   },
 
   async getFolder(folderId: number) {
